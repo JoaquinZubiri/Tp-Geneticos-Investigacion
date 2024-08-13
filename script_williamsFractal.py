@@ -5,6 +5,7 @@ import numpy as np
 import ta
 
 import matplotlib.pyplot as plt
+import mplfinance as mpf
 
 buys, sells = [], []
 
@@ -15,15 +16,15 @@ df_15m = yf.download("MSFT", start="2024-08-01", interval="15m")
 df_15m["EMA200"] = ta.trend.ema_indicator(df_15m["Close"], window=200)
 
 #Calcular Williams Fractal (usando Rolling max y min function)
-df_15m["wf_Top_Bool"] = np.where(df_15m["High"] == df_15m["High"].rolling(5, center=True).max(), True, False)
+df_15m["wf_Top_Bool"] = np.where(df_15m["High"] == df_15m["High"].rolling(9, center=True).max(), True, np.nan)
 
-df_15m["wf_Top"] = np.where(df_15m["High"] == df_15m["High"].rolling(5, center=True).max(), df_15m["High"], None)
+df_15m["wf_Top"] = np.where(df_15m["High"] == df_15m["High"].rolling(9, center=True).max(), df_15m["High"], np.nan)
 
-df_15m["wf_Bottom"] = np.where(df_15m["Low"] == df_15m["Low"].rolling(5, center=True).min(), df_15m["Low"], None)
+df_15m["wf_Bottom"] = np.where(df_15m["Low"] == df_15m["Low"].rolling(9, center=True).min(), df_15m["Low"], np.nan)
 
 #Llenar las celdas vacias con el ultimo valor valido (en la columna wf_Top y wf_Bottom)
-df_15m["wf_Top"] = df_15m["wf_Top"].ffill()
-df_15m["wf_Bottom"] = df_15m["wf_Bottom"].ffill()
+# df_15m["wf_Top"] = df_15m["wf_Top"].ffill()
+# df_15m["wf_Bottom"] = df_15m["wf_Bottom"].ffill()
 
 
 
@@ -80,3 +81,15 @@ plt.scatter(df_15m.index[df_15m['TargetProfit'] != False], df_15m['TargetProfit'
 plt.legend()
 plt.show()
 
+
+# Crear las listas de anotaciones para los fractales
+ap = [
+    mpf.make_addplot(df_15m['wf_Top'], scatter=True, markersize=50, marker='^', color='g'),
+    mpf.make_addplot(df_15m['wf_Bottom'], scatter=True, markersize=50, marker='v', color='r')
+]
+
+# Graficar las velas con los fractales
+mpf.plot(df_15m, type='candle', style='charles', addplot=ap,
+        title='Fractales de Williams en BTC-USD',
+        ylabel='Precio',
+        volume=True)
