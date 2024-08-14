@@ -10,21 +10,21 @@ import mplfinance as mpf
 buys, sells = [], []
 
 #Obtener datos historicos de BTC-USD
-df_15m = yf.download("MSFT", start="2024-08-01", interval="15m")
+df_15m = yf.download("MSFT", start="2024-07-01", interval="15m")
 
 #Calcular medias moviles
 df_15m["EMA200"] = ta.trend.ema_indicator(df_15m["Close"], window=200)
 
 #Calcular Williams Fractal (usando Rolling max y min function)
-df_15m["wf_Top_Bool"] = np.where(df_15m["High"] == df_15m["High"].rolling(9, center=True).max(), True, np.nan)
+df_15m["wf_Top_Bool"] = np.where(df_15m["High"] == df_15m["High"].rolling(9, center=True).max(), True, None)
 
-df_15m["wf_Top"] = np.where(df_15m["High"] == df_15m["High"].rolling(9, center=True).max(), df_15m["High"], np.nan)
+df_15m["wf_Top"] = np.where(df_15m["High"] == df_15m["High"].rolling(9, center=True).max(), df_15m["High"], None)
 
-df_15m["wf_Bottom"] = np.where(df_15m["Low"] == df_15m["Low"].rolling(9, center=True).min(), df_15m["Low"], np.nan)
+df_15m["wf_Bottom"] = np.where(df_15m["Low"] == df_15m["Low"].rolling(9, center=True).min(), df_15m["Low"], None)
 
 #Llenar las celdas vacias con el ultimo valor valido (en la columna wf_Top y wf_Bottom)
-# df_15m["wf_Top"] = df_15m["wf_Top"].ffill()
-# df_15m["wf_Bottom"] = df_15m["wf_Bottom"].ffill()
+df_15m["wf_Top"] = df_15m["wf_Top"].ffill()
+df_15m["wf_Bottom"] = df_15m["wf_Bottom"].ffill()
 
 
 
