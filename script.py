@@ -6,6 +6,7 @@ import mplfinance as mpl
 import matplotlib.pyplot as plt
 from boxCounting import fractal_dimension
 import config as cfg
+import numpy as np
 from random import *
 
 #Config API
@@ -15,12 +16,12 @@ client = Client(api_key, api_secret)
 price = client.get_symbol_ticker(symbol="BTCUSDT")
 
 #Parametros para las salidas
-tiempo_referencia = 1                                            # Tamaño de la vela
+tiempo_referencia = 1   # Tamaño de la vela
 añopredict = 2024               
-horaInicioprincipal = 15                                         # Hora en la que se inicia la grafica principal a predecir
+horaInicioprincipal = 15  # Hora en la que se inicia la grafica principal a predecir
 horaIniciopredict = 20 
-horasDePredict = 1                                               # Tiempo de prediccion
-horaFinpredict = horaIniciopredict + horasDePredict              # Horario fin de la prediccion
+horasDePredict = 1  # Tiempo de prediccion
+horaFinpredict = horaIniciopredict + horasDePredict # Horario fin de la prediccion
 
 tiempo_init = dt.time(horaInicioprincipal,0,0) #Formato HIPP:00:00
 tiempo_current = dt.time(horaIniciopredict,0,0) #Formato HIP:00:00
@@ -28,10 +29,10 @@ tiempo_fin_predict = dt.time(horaFinpredict,0,0) #Formato HFP:00:00
 
 print("precio", price)
 asset="BTCUSDT"
-start= str(añopredict) + ".07.15" + " " + str(tiempo_init)
-end= str(añopredict) + ".07.15" + " " + str(tiempo_current)
-startPredict= str(añopredict) + ".07.15"+ " " + str(tiempo_current)
-endPredict= str(añopredict) + ".07.15" + " " + str(tiempo_fin_predict)
+start= str(añopredict) + ".05.15" + " " + str(tiempo_init)
+end= str(añopredict) + ".05.15" + " " + str(tiempo_current)
+startPredict= str(añopredict) + ".05.15"+ " " + str(tiempo_current)
+endPredict= str(añopredict) + ".05.15" + " " + str(tiempo_fin_predict)
 timeframe= str(tiempo_referencia) + "m"
 data = client.get_historical_klines(asset, timeframe, start, end)
 df= pd.DataFrame(client.get_historical_klines(asset, timeframe, start, end))
@@ -52,14 +53,14 @@ mpl.plot(df, type='candle', volume=False, mav=7, title="Gráfico de Velas - " + 
 
 #Funcion para mostrar la comparativa fractal
 def get_historical_data(asset, timeframe, start, end):
-  data = client.get_historical_klines(asset, timeframe, start, end)
-  df = pd.DataFrame(data)
-  df=df.iloc[:,:6]
-  df.columns=["Date","Open","High","Low","Close","Volume"]
-  df=df.set_index("Date")
-  df.index=pd.to_datetime(df.index,unit="ms")
-  df=df.astype("float")
-  return df
+    data = client.get_historical_klines(asset, timeframe, start, end)
+    df = pd.DataFrame(data)
+    df=df.iloc[:,:6]
+    df.columns=["Date","Open","High","Low","Close","Volume"]
+    df=df.set_index("Date")
+    df.index=pd.to_datetime(df.index,unit="ms")
+    df=df.astype("float")
+    return df
 
 #Seteo de los datos de cada intervalo
 data_1m = get_historical_data(asset, Client.KLINE_INTERVAL_1MINUTE, start, end)
@@ -178,7 +179,7 @@ print("Probabilidad Alcista: ", probAlcista)
 print("Probabilidad Bajista: ", probBajista)
 print("Promedio Volumen: ", promVolumen)
 
-#uncion Ruleta
+#Funcion Ruleta
 def RuletaVolumen():
     x = randint(0, len(indiceVolumen))
     intervalo = intervaloVolumen[indiceVolumen[x]]
@@ -381,6 +382,31 @@ print(probAlcista)
 print("bajista")
 print(probBajista)
 # print(f"Diferencia de dimensiones fractales: {diff}")
+
+
+
+## CALCULO DE ERROR RELATIVO EN LAS PREDICCIONES GRAFICADAS    
+
+# Función para calcular el error relativo de las predicciones
+def calcu_error_rela(data):
+    error_rela = 0
+    for i in range(0, len(arr2)):
+        error_rela += abs((arr2[i] - data[i])/arr2[i])
+    return error_rela * 100
+
+
+print("------------------CALCULO DE ERROR RELATIVO------------------")
+print("Error relativo (Original): ", calcu_error_rela(arr2), " %")
+print("Error relativo (Corrida 1): ", calcu_error_rela(arr[current:]), " %")
+print("Error relativo (Corrida 2): ", calcu_error_rela(arr3[current:]), " %")
+print("Error relativo (Corrida 3): ", calcu_error_rela(arr4[current:]), " %")
+
+
+
+
+
+
+
 
 ## REGLAS
 #Para las reglas podriamos definir la suba o bajada en cuestion de probabilidad de ocurrecnicas de las mismas gracias al historial sacado de la API
