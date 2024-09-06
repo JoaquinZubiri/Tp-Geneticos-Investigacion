@@ -52,23 +52,9 @@ data_15m = f.getHistoricalData(asset, Client.KLINE_INTERVAL_15MINUTE, start, end
 g.comparativaFractal(data_1m, data_5m, data_15m)
 
 
-# #Podemos hacer este calculo de dimension fractal para ver como difieren en el valor final segun el intervalo. Serviria para la parte teorica un poco
-# dim_5m = fractal_dimension(data_5m["Close"].values, 10)
-# dim_1h = fractal_dimension(data_1h["Close"].values, 10)
-
-# print(f"Dimension fractal (5 minutos): {dim_5m}")
-# print(f"Dimension fractal (1 hora): {dim_1h}")
-
-# #Comparar las dimensiones fractales
-# diff = dim_5m - dim_1h
-
-# print(f"Diferencia de dimensiones fractales: {diff}")
-
 
 ### CALCULO PROBABILIDADES ALC y BAJ ###
 probAlcista, probBajista = f.probAlcBaj(df)
-### CALCULO DE INTERVALOS DE VOLUMEN (ruleta) ###
-intervaloVolumen, indiceVolumen = f.probVolumen(df)
 ### CALCULO DE INTERVALOS DE PRECIO (ruleta)###
 intervaloPrecio, indicePrecio = f.probPrecio(df)
     
@@ -79,7 +65,6 @@ probBajista = probBajista/xtotal
 
 print("Probabilidad Alcista: ", probAlcista)
 print("Probabilidad Bajista: ", probBajista)
-# print(f"Diferencia de dimensiones fractales: {diff}")
 
 
 # Ajuste de salida para cualquier tiempo de referencia y hora (Sirve para un mismo dia, ajustar para todos los dias parametrizando los mismos) 
@@ -88,6 +73,7 @@ horaspredict = horaFinpredict - horaIniciopredict
 if horaspredict <= 0:
     horaspredict += 24
 muestraRan = 60 * horaspredict // tiempo_referencia
+
 
     ### Corridas prediccion ###
 
@@ -106,12 +92,28 @@ arr3 = f.prediccionCorrida(arr3, muestraRan, probAlcista, indicePrecio, interval
 arr4 = df["Close"].values.tolist()
 arr4 = f.prediccionCorrida(arr4, muestraRan, probAlcista, indicePrecio, intervaloPrecio)
 
+# CORRIDA 4
+arr5 = df["Close"].values.tolist()
+arr5 = f.prediccionCorrida(arr5, muestraRan, probAlcista, indicePrecio, intervaloPrecio)
+
+# CORRIDA 5
+arr6 = df["Close"].values.tolist()
+arr6 = f.prediccionCorrida(arr6, muestraRan, probAlcista, indicePrecio, intervaloPrecio)
+
+# CORRIDA 6
+arr7 = df["Close"].values.tolist()
+arr7 = f.prediccionCorrida(arr7, muestraRan, probAlcista, indicePrecio, intervaloPrecio)
 
 #Tramo real de la moneda que queremos predecir (Para comparar resultados)
 arr2 = df2["Close"].values.tolist()
 long = len(df["Close"].values)-1
 
-g.comparativaCorridas(arr, arr2, arr3, arr4, asset, horaInicioprincipal, horaIniciopredict, horaspredict, tiempo_referencia, long)
+## RESULTANTE
+arr_resultante = [(a + b + c + d + e + f)/6 for a, b, c, d, e, f in zip(arr[long:], arr3[long:], arr4[long:], arr5[long:], arr6[long:], arr7[long:])]
+
+coleccion_arrays = [arr, arr3, arr4, arr5, arr6, arr7]
+
+g.comparativaCorridas(arr_resultante, arr , coleccion_arrays, arr2, asset, horaInicioprincipal, horaIniciopredict, horaspredict, tiempo_referencia, long)
 
 #Analisis posterior. 
 f.analisisPosterior(df, df2, arr, arr2, arr3, arr4)

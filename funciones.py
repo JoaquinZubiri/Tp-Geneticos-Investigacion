@@ -37,28 +37,6 @@ def probAlcBaj(df: pd.DataFrame):
 
     return probAlcista, probBajista
 
-def probVolumen(df: pd.DataFrame):
-    intervaloVolumen = []
-    indiceVolumen = []
-    v = df["Volume"].values[0]
-    intervaloVolumen.append([v-v*0.5, v + v*0.5])
-    indiceVolumen.append(0)
-
-    for i in range(1, len(df["Close"].values)):
-        bandera = False
-        v = df["Volume"].values[i]
-        for j in range(0, len(intervaloVolumen)):
-            # print("entro")
-            if(v > intervaloVolumen[j][0] and v < intervaloVolumen[j][1]):
-                indiceVolumen.append(j)
-                bandera = True
-                break
-        if(bandera == False):
-            intervaloVolumen.append([v-v*0.5, v + v*0.5])
-            indiceVolumen.append(j)
-
-    return intervaloVolumen, indiceVolumen
-
 def probPrecio(df: pd.DataFrame):
     intervaloPrecio = []
     indicePrecio = []

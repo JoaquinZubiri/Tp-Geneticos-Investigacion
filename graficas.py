@@ -26,14 +26,15 @@ def comparativaFractal(data_1m, data_5m, data_15m):
     plt.tight_layout()
     plt.show()
 
-def comparativaCorridas(arr, arr2, arr3, arr4, asset, horaInicioprincipal, horaIniciopredict, horaspredict, tiempo_referencia, long):
+def comparativaCorridas(resultante, base ,coleccion_arrays, original, asset, horaInicioprincipal, horaIniciopredict, horaspredict, tiempo_referencia, long):
     plt.figure(figsize=(12, 7))
-    plt.plot(arr[:long+1], color='blue') #Close
-    plt.plot(range(long, len(arr)), arr[long:], color='thistle', label="Corrida 1")
-    plt.plot(range(long, len(arr3)), arr3[long:], color='pink', label="Corrida 2")
-    plt.plot(range(long, len(arr4)), arr4[long:], color='burlywood', label="Corrida 3")
+    plt.plot(base[:long+1], color='blue') #Close
+    for arr in coleccion_arrays:
+        plt.plot(range(long, len(arr)), arr[long:])
     plt.legend()
-    plt.plot(range(long, long + len(arr2)), arr2, label="Close arr2", color='blue')
+
+    plt.plot(range(long, long + len(original)), original, label="Close original", color='blue')
+    plt.plot(range(long, long + len(original)), resultante, label="RESULTANTE", color='red')
     plt.suptitle('Prediccion de ' + asset)
     horaestudio = horaIniciopredict - horaInicioprincipal # ESTO NO ES EFICIENTE. SIRVE PARA 1 DIA NOMAS. SE PODRIAN PARAMETRIZAR LOS DIAS Y AHI SERIA, O BORRARLO A LA MIERDA. VER SI PODEMOS HACERLO PARA CUALQUIER FECHA.
     if horaIniciopredict - horaInicioprincipal == 0:
