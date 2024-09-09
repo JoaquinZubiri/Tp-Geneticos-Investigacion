@@ -82,16 +82,47 @@ def hurst_exponent(time_series):
     return hurst_exp
 
 def prediccionCorrida(arr, muestraRan, probAlcista, indicePrecio, intervaloPrecio):
+    ultima_fila = arr.iloc[-1]
+
     for i in range(0, muestraRan): 
         z = randint(1, 100)
-        # Probabilidad Alcista
+        ultima_fila = arr.iloc[-1]
+        nueva_fecha = ultima_fila['Date'] + pd.Timedelta(minutes=1)
         if z <= probAlcista*100: 
-            arr.append(arr[-1] + ruleta(indicePrecio, intervaloPrecio))
+            # Probabilidad Alcista
+            nuevo_precio = ultima_fila['Close'] + ruleta(indicePrecio, intervaloPrecio)
+            # arr.append(arr[-1] + ruleta(indicePrecio, intervaloPrecio))
+
         else:
             # Probabilidad Bajista    
-            arr.append(arr[-1] - ruleta(indicePrecio, intervaloPrecio)) 
-
+            nuevo_precio = ultima_fila['Close'] - ruleta(indicePrecio, intervaloPrecio)
+            # arr.append(arr[-1] - ruleta(indicePrecio, intervaloPrecio))
+         
+        nueva_fila = pd.DataFrame({'Date': [nueva_fecha], 'Close': [nuevo_precio]})
+        arr = pd.concat([arr, nueva_fila])
+        
+        
     return arr
+
+
+def calculoPuntoQuiebre(df):
+    punto_quiebre = []
+    quiebre = 0
+    for d in range(len(df)):
+        if 'EMA200' in df.columns and not pd.isna(df.iloc[d]["EMA200"]):
+            if df.iloc[d]["EMA50"] - df.iloc[d]["EMA200"] > 0 and quiebre < 0:
+                punto_quiebre.append(df.iloc[d])
+            elif df.iloc[d]["EMA50"] - df.iloc[d]["EMA200"] < 0 and quiebre > 0:
+                punto_quiebre.append(df.iloc[d])
+            quiebre = df.iloc[d]["EMA50"] - df.iloc[d]["EMA200"]
+    return punto_quiebre
+
+
+
+
+
+
+
 
 
 ### ANALISIS POSTERIOR ###
@@ -101,7 +132,6 @@ def calcu_error_rela(data, arr2):
     for i in range(0, len(arr2)):
         error_rela += abs((arr2[i] - data[i])/arr2[i])
     return error_rela * 100
-
 
 def analisisPosterior(df, df2, arr, arr2, arr3, arr4):
     c1 = (arr[-1]/arr2[-1]) 

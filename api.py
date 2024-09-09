@@ -24,3 +24,12 @@ def llamada_api(start, end, startPredict, endPredict, timeframe, asset, client):
 
     return df, df2
 
+def llamada_mensual(client, asset, timeframe ): # 60 dias
+    df= pd.DataFrame(client.get_historical_klines(asset, timeframe, "2024.06.20", "2024.08.20"))
+    df=df.iloc[:,:6]
+    df.columns=["Date","Open","High","Low","Close","Volume"]
+    df=df.set_index("Date")
+    df.index=pd.to_datetime(df.index,unit="ms")
+    df=df.astype("float")
+
+    return df
