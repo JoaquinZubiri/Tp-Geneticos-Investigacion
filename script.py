@@ -11,13 +11,13 @@ import api as a
 import graficas as g
 
 
-##### LLAMADA API BINANCE #####
+##### LLAMADA API BINANCE  #####
 
 #Config API
 api_key = cfg.api_key
 api_secret = cfg.api_secret
 client = Client(api_key, api_secret)
-price = client.get_symbol_ticker(symbol="EURUSDT")
+price = client.get_symbol_ticker(symbol="BTCUSDT")
 
 #Parametros para las salidas
 tiempo_referencia = 1   # Tamaño de la vela
@@ -32,7 +32,7 @@ tiempo_current = dt.time(horaIniciopredict,0,0) #Formato HIP:00:00
 tiempo_fin_predict = dt.time(horaFinpredict,0,0) #Formato HFP:00:00
 
 #Configuracion de la llamada a la API
-asset="EURUSDT"
+asset="BTCUSDT"
 start= str(añopredict) + ".04.10" + " " + str(tiempo_init)
 end= str(añopredict) + ".04.10" + " " + str(tiempo_current)
 startPredict= str(añopredict) + ".04.10"+ " " + str(tiempo_current)
