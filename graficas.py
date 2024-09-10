@@ -27,7 +27,7 @@ def comparativaFractal(data_1m, data_5m, data_15m):
     plt.tight_layout()
     plt.show()
 
-def comparativaCorridas(base ,coleccion_arrays, original, asset, horaInicioprincipal, horaIniciopredict, horaspredict, tiempo_referencia):
+def comparativaCorridas(base ,coleccion_arrays, original, asset, horaInicioprincipal, horaIniciopredict, horaspredict, tiempo_referencia, grafica200, grafica50):
     ultima_vela = base.iloc[-1]
     print("base", base)
     
@@ -41,8 +41,9 @@ def comparativaCorridas(base ,coleccion_arrays, original, asset, horaInicioprinc
     plt.plot(base['Date'], base['EMA50']) 
     plt.plot(base['Date'], base['EMA200']) 
 
-
     plt.plot(original['Date'], original['Close'], color='blue') #original
+    plt.plot(grafica200['Date'], grafica200['Value'], color='red') #200
+    plt.plot(grafica50['Date'], grafica50['Value'], color='green') #50
     # plt.plot(range(long, long + len(original)), resultante, label="RESULTANTE", color='red')
     plt.suptitle('Prediccion de ' + asset)
     horaestudio = horaIniciopredict - horaInicioprincipal # ESTO NO ES EFICIENTE. SIRVE PARA 1 DIA NOMAS. SE PODRIAN PARAMETRIZAR LOS DIAS Y AHI SERIA, O BORRARLO A LA MIERDA. VER SI PODEMOS HACERLO PARA CUALQUIER FECHA.
