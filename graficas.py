@@ -27,23 +27,25 @@ def comparativaFractal(data_1m, data_5m, data_15m):
     plt.tight_layout()
     plt.show()
 
-def comparativaCorridas(base ,coleccion_arrays, original, asset, horaInicioprincipal, horaIniciopredict, horaspredict, tiempo_referencia, grafica200, grafica50):
+def comparativaCorridas(base ,coleccion_arrays, original, asset, horaInicioprincipal, horaIniciopredict, horaspredict, tiempo_referencia, grafica200, grafica50, arr_resultante):
     ultima_vela = base.iloc[-1]
     print("base", base)
     
     plt.figure(figsize=(12, 7))
     
-    for arr in coleccion_arrays:
-        plt.plot(arr['Date'], arr['Close'])
-    plt.legend()
+    # for arr in coleccion_arrays:
+    #     plt.plot(arr['Date'], arr['Close'])
+    # plt.legend()
 
     plt.plot(base['Date'], base['Close'], color='blue') #Close
-    plt.plot(base['Date'], base['EMA50']) 
-    plt.plot(base['Date'], base['EMA200']) 
+    plt.plot(base['Date'], base['EMA50'], color='violet') 
+    plt.plot(base['Date'], base['EMA200'], color='darkgrey') 
 
     plt.plot(original['Date'], original['Close'], color='blue') #original
-    plt.plot(grafica200['Date'], grafica200['Value'], color='red') #200
-    plt.plot(grafica50['Date'], grafica50['Value'], color='green') #50
+    plt.plot(grafica200['Date'], grafica200['Value'], color='darkgrey') #200
+    plt.plot(grafica50['Date'], grafica50['Value'], color='violet') #50
+    plt.plot(arr_resultante['Date'], arr_resultante['Close'], color='red') #resultante
+
     # plt.plot(range(long, long + len(original)), resultante, label="RESULTANTE", color='red')
     plt.suptitle('Prediccion de ' + asset)
     horaestudio = horaIniciopredict - horaInicioprincipal # ESTO NO ES EFICIENTE. SIRVE PARA 1 DIA NOMAS. SE PODRIAN PARAMETRIZAR LOS DIAS Y AHI SERIA, O BORRARLO A LA MIERDA. VER SI PODEMOS HACERLO PARA CUALQUIER FECHA.
