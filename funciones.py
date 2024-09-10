@@ -146,7 +146,6 @@ def rectasEMA(arr,):
     y_intersect = m2 * x_intersect + b2
 
     x_intersect = pd.to_datetime(x_intersect, unit='s').floor('min')
-    print("Intersección de las rectas: ", x_intersect, y_intersect)
 
     # Generar los valores de x para graficar
     x_values = np.linspace(x_inicial, x_inicial+7200, 120)
@@ -167,10 +166,8 @@ def prediccionCorrida(arr, muestraRan, probAlcista, probBajista, indicePrecio, i
     ema_referencia = y_values200
     if(x_intersect > arr.iloc[-1]['Date']):
         interseccion = True
-        print("Hay interseccion")
     else:
         interseccion = False
-        print("No hay interseccion")
 
     for i in range(0, muestraRan):
 
@@ -210,9 +207,10 @@ def prediccionCorrida(arr, muestraRan, probAlcista, probBajista, indicePrecio, i
         elif abs(distancia) < 0.0055:
             recorte = 0.7  # Recortar al 70%
         elif abs(distancia) < 0.015:
-            recorte = 0.6  # Recortar al 60%
+            recorte = 0.6  # Recortar al 40%
         else:
-            recorte = 0.4  # Recortar al 10%
+            recorte = 0.5  # Recortar al 10%
+
 
         long_intervaloPrecio = len(intervaloPrecio)
         puntoRecorte = int(long_intervaloPrecio * recorte)
@@ -251,17 +249,6 @@ def prediccionCorrida(arr, muestraRan, probAlcista, probBajista, indicePrecio, i
     return arr, grafica200, grafica50
 
 
-def calculoPuntoQuiebre(df):
-    punto_quiebre = []
-    quiebre = 0
-    for d in range(len(df)):
-        if 'EMA200' in df.columns and not pd.isna(df.iloc[d]["EMA200"]):
-            if df.iloc[d]["EMA50"] - df.iloc[d]["EMA200"] > 0 and quiebre < 0:
-                punto_quiebre.append(df.iloc[d])
-            elif df.iloc[d]["EMA50"] - df.iloc[d]["EMA200"] < 0 and quiebre > 0:
-                punto_quiebre.append(df.iloc[d])
-            quiebre = df.iloc[d]["EMA50"] - df.iloc[d]["EMA200"]
-    return punto_quiebre
 
 
 ### ANALISIS POSTERIOR ###
@@ -291,85 +278,3 @@ def peorResultado(corridas,original):
             peor_corrida = corridas[i]
     return peor_corrida
 
-
-
-# def analisisPosterior(df, df2, arr, arr2, arr3, arr4):
-#     c1 = (arr[-1]/arr2[-1])
-#     c1a = (arr[-1]/df["Close"].values[-1])
-#     c2 = (arr3[-1]/arr2[-1])
-#     c2a = (arr3[-1]/df["Close"].values[-1])
-#     c3 = (arr4[-1]/arr2[-1])
-#     c3a = (arr4[-1]/df["Close"].values[-1])
-
-#     cEsp = (arr2[-1]/df["Close"].values[-1])
-
-#     porcEsperado = arr2[-1] - df["Close"].values[-1]
-
-#     if (porcEsperado > 0):
-#         sentidoesperado = ' Positivo'
-#     else:
-#         sentidoesperado = ' Negativo'
-#     #Variacion esperada
-#     if (cEsp > 1):
-#         cEsp -=1
-#     else:
-#         cEsp = 1 - cEsp
-#     # Variaciones obtenidas en cada corrida respecto al valor inicial
-#     if (c1a > 1):
-#         c1a -=1
-#         c1obtenido = " Positivo"
-#     else:
-#         c1a = 1 - c1a
-#         c1obtenido = " Negativo"
-#     if (c2a > 1):
-#         c2a -=1
-#         c2obtenido = " Positivo"
-#     else:
-#         c2a = 1 - c2a
-#         c2obtenido = " Negativo"
-
-#     if (c3a > 1):
-#         c3a -=1
-#         c3obtenido = " Positivo"
-#     else:
-#         c3a = 1 - c3a
-#         c3obtenido = " Negativo"
-
-#     ventana = tk.Tk()
-#     ventana.geometry('1100x300')
-#     lbl_titulo = tk.Label(ventana, text='Análisis Resultados', font=('Arial', 24))
-#     lbl_precioEsperado = tk.Label(ventana, text='Precio de salida: $' + str(df["Close"].values[-1]) + ' - Precio esperado: $' + str(arr2[-1]), font=('Arial', 17))
-#     lbl_variacionEsperada = tk.Label(ventana, text='Variacion esperada: %' + str(round((cEsp*100),5)) + sentidoesperado, font=('Arial', 17))
-#     if (c1 > 1):
-#         c1 -=1
-#         lbl_impresion = tk.Label(ventana, text="Prediccion 1: $" + str(round(arr[-1],2)) + " - Variacion obtenida: %" + str(round((c1a*100),3)) + c1obtenido + " - Porcentaje de acierto respecto a la esperada: " + str(100-round((c1*100),3)) + "% +", font=('Arial',15))
-#     elif(0 < c1 <= 1):
-#         c1 = 1 - c1
-#         lbl_impresion = tk.Label(ventana, text="Prediccion 1: $" + str(round(arr[-1],2)) + " - Variacion obtenida: %" + str(round((c1a*100),3)) + c1obtenido + " - Porcentaje de acierto respecto a la esperada: " + str(100-round((c1*100),3)) + "% -", font=('Arial',15))
-
-#     if (c2 > 1):
-#         c2 -= 1
-#         lbl_impresion2 = tk.Label(ventana, text="Prediccion 2: $" + str(round(arr3[-1],2)) + " - Variacion obtenida: %" + str(round((c2a*100),3)) + c2obtenido + " - Porcentaje de acierto respecto a la esperada: " + str(100-round((c2*100),3)) + "% +", font=('Arial',15))
-#     elif(0 < c2 <= 1):
-#         c2 = 1 - c2
-#         lbl_impresion2 = tk.Label(ventana, text="Prediccion 2: $" + str(round(arr3[-1],2)) + " - Variacion obtenida: %" + str(round((c2a*100),3)) + c2obtenido + " - Porcentaje de acierto respecto a la esperada: " + str(100-round((c2*100),3)) + "% -", font=('Arial',15))
-
-#     if (c3 > 1):
-#         c3 -= 1
-#         lbl_impresion3 = tk.Label(ventana, text="Prediccion 3: $" + str(round(arr4[-1],2)) + " - Variacion obtenida: %" + str(round((c3a*100),3)) + c3obtenido + " - Porcentaje de acierto respecto a la esperada: " + str(100-round((c3*100),3)) + "% +", font=('Arial',15))
-#     elif(0 < c3 <= 1):
-#         c3 = 1 - c3
-#         lbl_impresion3 = tk.Label(ventana, text="Prediccion 3: $" + str(round(arr4[-1],2)) + " - Variacion obtenida: %" + str(round((c3a*100),3)) + c3obtenido + " - Porcentaje de acierto respecto a la esperada: " + str(100-round((c3*100),3)) + "% -", font=('Arial',15))
-
-#     lbl_titulo.pack()
-#     lbl_precioEsperado.pack()
-#     lbl_variacionEsperada.pack()
-#     lbl_impresion.pack()
-#     lbl_impresion2.pack()
-#     lbl_impresion3.pack()
-
-#     lbl_impresion.place(x=2, y=120)
-#     lbl_impresion2.place(x=2, y=150)
-#     lbl_impresion3.place(x=2, y=180)
-
-#     ventana.mainloop()

@@ -26,8 +26,8 @@ horaInicioprincipal = 4  # Hora en la que se inicia la grafica principal a prede
 horaIniciopredict = 20 
 horasDePredict = 1  # Tiempo de prediccion
 horaFinpredict = horaIniciopredict + horasDePredict # Horario fin de la prediccion
-diaPredict = "21"
-mesPredict = "04"
+diaPredict = "02"
+mesPredict = "07"
 
 tiempo_init = dt.time(horaInicioprincipal,0,0) #Formato HIPP:00:00
 tiempo_current = dt.time(horaIniciopredict,0,0) #Formato HIP:00:00
@@ -45,13 +45,8 @@ timeframe= str(tiempo_referencia) + "m"
 df, df2 = a.llamada_api(start, end, startPredict, endPredict, timeframe, asset, client)
 print(df)
 print("--------")
-# df_mensual = a.llamada_mensual(client, asset, timeframe)
-# print(df_mensual)
-# print("--------")
 
-df['EMA20'] = ta.trend.ema_indicator(df['Close'], window=20)
 df['EMA50'] = ta.trend.ema_indicator(df['Close'], window=50)
-df['EMA100'] = ta.trend.ema_indicator(df['Close'], window=100)
 df['EMA200'] = ta.trend.ema_indicator(df['Close'], window=200)
 
 
@@ -67,11 +62,6 @@ u_50 = ultimo_valor['EMA50']
 u_200 = ultimo_valor['EMA200']
 diff_emma = (u_50 - u_200)/ultimo_valor['Close'] * 100 
 
-## CALCULO DE PUNTO DE QUIEBRE ##
-punto_quiebre = f.calculoPuntoQuiebre(df)
-        
-print("Punto de quiebre: ", punto_quiebre)
-ultimo_quiebre = punto_quiebre[-1]
 
 
 # Calcula las pendientes
@@ -82,25 +72,7 @@ df['Pendiente_EMA200'] = df['EMA200'].diff()
 
 # Señal de cruce próximo si ambas pendientes convergen hacia el mismo punto
 df['Cruce Próximo'] = ((df['Pendiente_EMA50'] > 0) & (df['Pendiente_EMA200'] < 0)) | ((df['Pendiente_EMA50'] < 0) & (df['Pendiente_EMA200'] > 0))
-# 
-instante_anterior = df.iloc[-1].name - pd.Timedelta(minutes=15)
-# 
-if(ultimo_quiebre.name < instante_anterior):
-    nuevo_tiempo = instante_anterior
-else:
-    diff_tiempo = ultimo_valor.name - ultimo_quiebre.name
-    # Calcular la mitad del tiempo de diff_tiempo
-    mitad_diff_tiempo = diff_tiempo / 2
-    # Sumar la mitad del tiempo al último punto de quiebre
-    nuevo_tiempo = ultimo_quiebre.name + mitad_diff_tiempo
-# Redondear el tiempo al minuto más cercano
-nuevo_tiempo = pd.to_datetime(nuevo_tiempo).floor('min')
 
-punto_anterior = df.loc[nuevo_tiempo]
-print("Pendiente --> Punto anterior: ", punto_anterior["Pendiente_EMA50"], ", ", punto_anterior["Pendiente_EMA200"])
-print("Pendiente --> Punto Actual: ", df.iloc[-1]["Pendiente_EMA50"], ", ", df.iloc[-1]["Pendiente_EMA200"])
-
-print("Cruce Próximo: ", df['Cruce Próximo'].iloc[-1])
 
 tendencia_alcista = False
 if diff_emma >= 0:
@@ -111,24 +83,6 @@ else:
     tendencia_alcista = False
 
 
-## CALCULO DE PUNTO DE QUIEBRE GRAL##
-# punto_quiebre_gral = f.calculoPuntoQuiebre(df_mensual)
-        
-# print("Punto de quiebre_gral: ", punto_quiebre_gral)
-# diferencias_tiempo = []
-# for i in range(1, len(punto_quiebre)):
-#     tiempo_anterior = punto_quiebre[i-1].name
-#     tiempo_actual = punto_quiebre[i].name
-#     diferencia = tiempo_actual - tiempo_anterior
-#     diferencias_tiempo.append(diferencia)
-
-# tiempo_promedio_quiebres = sum(diferencias_tiempo, pd.Timedelta(0)) / len(diferencias_tiempo)
-# print(f"Tiempo promedio entre quiebres: {tiempo_promedio_quiebres}")
-
-
-# ### CALCULO PROBABILIDADES ALC y BAJ ###
-# probAlcista, probBajista = f.probAlcBaj(df)
-### CALCULO DE INTERVALOS DE PRECIO (ruleta)###
 intervaloPrecio, indicePrecio = f.probPrecio(df)
 
 
@@ -211,12 +165,9 @@ print("arr recortado", arr[long:])
 arr_resultante = pd.DataFrame({'Date': arr[long:]['Date']})
 arr_resultante['Close'] = [(a + b + c + d + e + f)/6 for a, b, c, d, e, f in zip(arr[long:]['Close'], arr3[long:]['Close'], arr4[long:]['Close'], arr5[long:]['Close'], arr6[long:]['Close'], arr7[long:]['Close'])]
 
-# coleccion_arrays = [arr, arr3, arr4, arr5, arr6, arr7]
 
 g.comparativaCorridas(arr_reset , Corridas, arr2, asset, horaInicioprincipal, horaIniciopredict, horaspredict, tiempo_referencia, grafica200, grafica50, arr_resultante)
 
-#Analisis posterior. 
-# f.analisisPosterior(df, df2, arr, arr2, arr3, arr4)
 
 ## CALCULO DE ERROR RELATIVO EN LAS PREDICCIONES GRAFICADAS    
 print("------------------CALCULO DE ERROR RELATIVO------------------")
