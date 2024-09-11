@@ -9,9 +9,9 @@ import pandas as pd
 import funciones as f
 import api as a
 import graficas as g
+ 
 
-
-##### LLAMADA API BINANCE #####
+##### LLAMADA API BINANCE  #####
 
 #Config API
 api_key = 123
@@ -35,10 +35,17 @@ tiempo_fin_predict = dt.time(horaFinpredict,0,0) #Formato HFP:00:00
 
 #Configuracion de la llamada a la API
 asset="BTCUSDT"
+<<<<<<< HEAD
+start= str(añopredict) + ".04.10" + " " + str(tiempo_init)
+end= str(añopredict) + ".04.10" + " " + str(tiempo_current)
+startPredict= str(añopredict) + ".04.10"+ " " + str(tiempo_current)
+endPredict= str(añopredict) + ".04.10" + " " + str(tiempo_fin_predict)
+=======
 start= str(añopredict) + "." + mesPredict + "." + diaPredict + " " + str(tiempo_init)
 end= str(añopredict) + "." + mesPredict + "." + diaPredict + " " + str(tiempo_current)
 startPredict= str(añopredict) + "." + mesPredict + "." + diaPredict + " " + str(tiempo_current)
 endPredict= str(añopredict) + "." + mesPredict + "." + diaPredict + " " + str(tiempo_fin_predict)
+>>>>>>> 7c9d772d5f931cf5d52126423f0df5787cd08b1f
 timeframe= str(tiempo_referencia) + "m"
 
 #Llamada a la API
