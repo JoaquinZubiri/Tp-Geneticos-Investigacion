@@ -1,6 +1,6 @@
 from binance import Client
 import datetime as dt
-import config as cfg
+# import config as cfg
 import numpy as np
 from random import *
 import ta
@@ -14,8 +14,8 @@ import graficas as g
 ##### LLAMADA API BINANCE #####
 
 #Config API
-api_key = cfg.api_key
-api_secret = cfg.api_secret
+api_key = 123
+api_secret = 123
 client = Client(api_key, api_secret)
 price = client.get_symbol_ticker(symbol="BTCUSDT")
 
